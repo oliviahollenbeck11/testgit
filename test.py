@@ -1,30 +1,27 @@
-from git import Repo
+pip install picamera
 
-#TODO: Enter your name
-name = ???
+import os
+import time
+import picamera2
 
-#TODO: Enter the folder name you made with 'mkdir.' If you haven't done that yet, go back!
-foldername = ???
+# Set the path where you want to save the picture
+folder_path = '/path/to/folder'
 
-#TODO: Change this to your repo location. Mine is '/home/pi/BWSI_Code/FlatSatChallenge'
-repo_name = ???
+# Create the folder if it doesn't exist
+os.makedirs(folder_path, exist_ok=True)
 
-#function for uploading to Github. Note the input has a default value
-def git_push(commit_message = 'New commit'):
-    repo = Repo(repo_name)
-    repo.git.add(repo_name + '/Images/')
-    repo.index.commit(commit_message)
-    print('made the commit')
-    origin = repo.remote('origin')
-    print('added remote')
-    origin.push()
-    print('pushed changes')
-        
+# Capture a picture with the Raspberry Pi camera
+with picamera.PiCamera() as camera:
+    # Wait for the camera to warm up
+    time.sleep(2)
+    
+    # Generate a unique filename based on the current timestamp
+    timestamp = time.strftime('%Y%m%d%H%M%S')
+    file_name = f'picture_{timestamp}.jpg'
+    file_path = os.path.join(folder_path, file_name)
+    
+    # Capture the picture and save it to the specified path
+    camera.capture(file_path)
 
-#Run it!
-new_file = repo_name + '/Images/' + foldername + '/' + name + '.txt'
-f = open(new_file,'w')
-f.write('%s' % name)
-f.close()
-
-git_push('%s is testing git!' %name)
+    # Print the path where the picture was saved
+    print(f'Picture saved: {file_path}')
